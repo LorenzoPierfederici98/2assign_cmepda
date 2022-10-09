@@ -25,11 +25,23 @@ class Particle:
         charge = charge in unit of e
         momentum = module of the momentum in MeV
         """
-        self.name = name
-        self.mass = mass 
-        self.charge = charge
+        self._name = name #questi attributi non devono essere cambiati dall'utente.                         
+        self._mass = mass #definisco delle properties senza setter
+        self._charge = charge
         self.momentum = momentum #chiamata al property setter che inizializza l'attributo ._momentum
                                  #se mettessi subito ._momentum l'utente potrebbe assegnare direttamente (senza property setter) valori negativi
+    @property
+    def name(self):
+        return self._name
+    
+    @property
+    def mass(self):
+        return self._mass
+    
+    @property
+    def charge(self):
+        return self._charge
+    
     def info(self):
         """Prints some info about the particle.
         """
@@ -51,7 +63,8 @@ class Particle:
             print('Cannot set an energy value lower than the particle mass')
         else:
             self.momentum = math.sqrt(energy**2 - self.mass**2)
-
+            #energy chiama il setter dell'impulso. Così facendo verifica che l'impulso non sia negativo.
+            #con ._momentum si evita la chiamata al setter (in questo caso so che sqrt non ritorna valori negativi).
     @property
     def momentum(self):
         """Set the particle momentum. It cannot accept negative values.
@@ -67,6 +80,26 @@ class Particle:
         else:
             self._momentum = momentum
 
+class Proton(Particle):
+    """Class describing a proton.
+    """
+    NAME = 'Proton'
+    MASS = 938 #MeV/c^2
+    CHARGE = +1 #e
 
-proton = Particle('Proton', 938., +1, -20)
+    def __init__(self, momentum = 0.):
+        Particle.__init__(self.NAME, self.MASS, self.CHARGE, momentum)
 
+class Alpha(Particle):
+    """Class describing an alpha particle.
+    """
+    NAME = 'Alpha'
+    MASS = 3727.3 #MeV/c^2
+    CHARGE = +2 #e
+
+    def __init__(self, momentum = 0.):
+        Particle.__init__(self.NAME, self.MASS, self.CHARGE, momentum)
+
+if __name__ == '__main__':
+    proton = Proton(200.)
+    proton.mass = 300
